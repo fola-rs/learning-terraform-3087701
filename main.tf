@@ -18,6 +18,16 @@ resource "aws_instance" "blog" {
  ami           = data.aws_ami.app_ami.id
  instance_type = var.instance_type
  vpc_security_group_ids = [module.blog_sg.security_group_id]
+
+ user_data = <<-EOF
+   #!/bin/bash
+   dnf install -y httpd
+   systemctl enable httpd
+   systemctl start httpd
+   echo "<h1>Hello from Fola's Terraform server</h1>" > /var/www/html/index.html
+ EOF
+ 
+ user_data_replace_on_change = true
  
  tags = {
    Name = "Learning Terraform"
