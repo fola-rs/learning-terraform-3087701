@@ -15,22 +15,16 @@ data "aws_vpc" "default" {
 }
 
 resource "aws_instance" "blog" {
- ami           = data.aws_ami.app_ami.id
- instance_type = var.instance_type
+ ami                    = data.aws_ami.app_ami.id
+ instance_type          = var.instance_type
  vpc_security_group_ids = [module.blog_sg.security_group_id]
-
-user_data = <<-EOF
+ user_data = <<-EOF
    #!/bin/bash
-   exec > /var/log/user-data.log 2>&1
-   set -x
-   dnf clean all
    dnf install -y httpd
    systemctl enable --now httpd
-   echo "<h1>Hello from Fola's Terraform server</h1>" > /var/www/html/index.html
+   echo "<h1>Hello from Fola</h1>" > /var/www/html/index.html
  EOF
- 
  user_data_replace_on_change = true
- 
  tags = {
    Name = "Learning Terraform"
  }
@@ -46,7 +40,7 @@ module "blog_sg" {
   vpc_id = data.aws_vpc.default.id
 
   # ingress rules
-  ingress_rules = ["http-80-tcp", "https-443-tcp", "ssh-22-tcp"]
+  ingress_rules = ["http-80-tcp", "https-443-tcp"]
   ingress_cidr_blocks = ["0.0.0.0/0"]
   # egress tules
   egress_rules = ["all-all"]
