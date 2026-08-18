@@ -21,6 +21,8 @@ resource "aws_instance" "blog" {
 
  user_data = <<-EOF
    #!/bin/bash
+   exec > /var/log/user-data.log 2>&1
+   # v2 - force rebuild
    dnf install -y httpd
    systemctl enable httpd
    systemctl start httpd
